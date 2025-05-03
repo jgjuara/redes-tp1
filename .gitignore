@@ -1,0 +1,8 @@
+.~lock.TP_GRAFOS.docx#
+TP_GRAFOS.docx
+
+*.csv
+*.txt
+*.pkl
+*.json
+!comandos.txt

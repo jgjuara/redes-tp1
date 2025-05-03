@@ -1,0 +1,5 @@
+# Exportar a tex sin codigo
+python -m jupyter nbconvert --to latex --TemplateExporter.exclude_input=True --TemplateExporter.exclude_input_prompt=True --TemplateExporter.exclude_output_prompt=True preTP1_solucion.ipynb --output preTP1_solucion_sin_codigo
+
+# exportar tex a pdf
+pdflatex preTP1_solucion_sin_codigo.tex
