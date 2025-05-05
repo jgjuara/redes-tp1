@@ -1,0 +1,199 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage[numbers]{natbib} % citas numéricas
+\usepackage{neurips_2024} % esta línea puede llevar [preprint] o [final] si es necesario
+
+\title{Adaptaciones particulares de las redes sociales ilícitas, caso de la actividad terrorista}
+
+\author{%
+  Pedro Bosch \\
+  Nicolas Caricati \\
+  Martín León \\
+Juan Gabriel Juara
+}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este trabajo compara dos redes sociales: una legal, basada en los personajes de la novela *Los Miserables*, y otra ilícita, compuesta por sospechosos de actividades terroristas. Se analizan propiedades como robustez y modularidad utilizando herramientas de teoría de grafos y algoritmos de detección de comunidades. Se observa que la red ilícita presenta adaptaciones estructurales específicas que aumentan su resiliencia y descentralización.
+\end{abstract}
+
+\section{Introducción}
+
+La teoría de grafos permite representar una amplia variedad de sistemas mediante estructuras compuestas por nodos (entidades) y enlaces (relaciones). En particular, su aplicación al análisis de redes sociales se ha consolidado como una herramienta eficaz para comprender dinámicas de interacción, difusión y organización en contextos sociales, políticos y culturales \cite{albert2000error}.
+
+En este trabajo se comparan dos redes sociales. Por un lado, la red de personajes de la novela *Los Miserables*, basada en las concurrencias entre personajes, es tomada como una estructura de referencia debido a sus características de cohesión y conectividad. Por otro lado, se analiza una red construida a partir de conexiones entre individuos vinculados a actividades terroristas \cite{krebs2002mapping}.
+
+Debido a su carácter ilícito, esta última red presenta adaptaciones estructurales particulares que favorecen el desarrollo de sus actividades. Estas adaptaciones se reflejan en propiedades clave como la robustez y en la presencia de comunidades bien definidas.
+
+La robustez es una propiedad central en el estudio de redes, especialmente en contextos donde la vulnerabilidad frente a fallos o ataques puede comprometer seriamente la estructura. En redes sociales, una mayor robustez puede implicar una mayor resiliencia organizativa, mejor comunicación entre nodos y menor dependencia de actores centrales.
+
+La robustez es una propiedad central en el estudio de redes, especialmente en contextos donde la vulnerabilidad frente a fallos o ataques puede comprometer seriamente la estructura. En redes sociales, una mayor robustez puede implicar una mayor resiliencia organizativa, mejor comunicación entre nodos y menor dependencia de actores centrales. A su vez, los algoritmos de detección de comunidades, como Girvan–Newman y Louvain, permiten identificar grupos de nodos más densamente conectados entre sí que con el resto de la red. Esta estructura modular puede ser clave para entender tanto la robustez como el funcionamiento interno de los sistemas sociales \cite{girvan2002community}.
+
+En este contexto, nos proponemos estudiar las adaptaciones particulares que presenta una red social inmersa en un entorno de ilegalidad, utilizando herramientas del análisis de grafos. En comparación con una red social legal (como la de Los Miserables), se espera observar diferencias en su robustez (frente a ataques dirigidos y fallos aleatorios), así como en la organización y conformación de sus comunidades.
+
+\section{Métodos}
+
+\subsection{Descripción de los datos}
+
+El estudio fue desarrollado con los sets de datos “Los Miserables” y “Terroristas”, ambos provistos por la cátedra Data Mining en Ciencia y Tecnología.
+
+Los Miserables es una red no dirigida y pesada de coocurrencias de personajes en la novela de Vitor Hugo "Los Miserables". Un nodo representa un personaje y un enlace entre nodos indica que ambos personajes aparecen en el mismo capítulo de la novela. El peso de cada enlace indica cuántas veces coocurren. 
+
+Terroristas es una red no dirigida y pesada que representa la red de contactos entre supuestos terroristas envueltos en el atentado a un tren en Madrid el 11 de Marzo del 2004, reconstruida a partir de las noticias en los diarios. Un nodo representa un terrorista, un enlace indica un contacto entre terroristas, y el peso indica cantidad de contactos. 
+
+Se seleccionaron estas redes por ser redes sociales inmersas en un contexto de conflicto que las moldea, se espera encontrar similitudes y diferencias en las variables topográficas e indicadores particulares que son el motivo de este estudio.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+Set & Nodos & Enlaces & Diámetro & Densidad & Transitividad & Clustering Promedio \\
+\midrule
+\textit{Los Miserables} & 77 & 254 & 5 & 0.09 & 0.49 & 0.57 \\
+\textit{Terroristas}    & 64 & 243 & 6 & 0.12 & 0.56 & 0.62 \\
+\bottomrule
+\end{tabular}
+\caption{Resumen de los indicadores de topología.}
+\end{table}
+
+
+\subsection{Comparación de Prototipos}
+
+Se compararon las redes con sus correspondientes prototipos equivalentes de Erdos-Renyi, Watts-Strogats(con p=0.01) y Barabasi-Albert. Para ello en primer lugar se transformaron a su versión no pesada utilizando una función del paquete networkx(Hagberg, Swart, & Schult, 2008) de Python. Luego, se compararon mediante el cálculo de los indicadores: diámetro, densidad, transitividad, clustering promedio, distribución de grado, centralidad de grado,  intermediación y cercanía. Esto se realizó para caracterizar las redes y poder realizar comparaciones posteriores.
+
+
+\subsection{Comparación entre redes}
+
+Para evaluar la robustez de las redes se utilizaron los métodos de “fallas aleatorias” y de “ataques dirigidos”. En el primer método se eliminaron aleatoriamente nodos y enlaces, al mismo tiempo que se evaluaba gráficamente como se modificaba la componente gigante y la eficiencia global de la red. En el método de “ataques dirigidos” se eliminaron selectivamente nodos según los valores de centralidad de grado mayor, y se evaluó el resultado de la misma manera que con el primer método.
+
+Para evaluar las comunidades se utilizaron dos algoritmos. El algoritmo de Girvan–Newman se basa en una estrategia divisiva: elimina iterativamente las aristas con mayor betweennesscentrality, lo que tiende a separar los grupos más conectados.
+
+Por otro lado, el algoritmo de Louvain emplea un enfoque heurístico y jerárquico basado en la optimización de la modularidad, una métrica que mide la densidad de enlaces dentro de las comunidades en comparación con una red aleatoria equivalente. 
+
+
+
+
+\section{Resultados y discusión}
+
+Los indicadores utilizados referidos a propiedades estructurales de las redes se pueden observar en la Tabla X y Figuras Xy X. El modelo Watts-Strogats presentó los indicadores más parecidos a los encontrados en las redes “Los Miserables” y “Terroristas”, lo cual es una señal de que el modelo logró reproducir mejor su topología. 
+
+En la comparación de la red “Los miserables” , los indicadores de transitividad y clustering promedio fueron más parecidos en relación a los otros modelos, en cambio que la densidad tomó valores semejantes en todos, y el diámetro resultó mayor. Esto puede explicarse en cómo es el proceso de construcción del modelo. 
+
+En la comparación de la red “Terroristas” se observa el mismo patrón. El modelo fue diseñado para crear redes de “mundo pequeño”, que presentan alto clustering global, corto diámetro y un nivel de aleatoriedad pequeño. Estas características suelen ser reproducidas en redes sociales (agrupamientos locales y buena conectividad).
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+Set & Versión & Diámetro & Densidad & Transitividad & Clustering Promedio \\
+\midrule
+\multirow{4}{*}{\textit{Los Miserables}} 
+  & O  & 5  & 0.09 & 0.49 & 0.57 \\
+  & ER & 5  & 0.09 & 0.11 & 0.12 \\
+  & WS & 10 & 0.10 & 0.63 & 0.63 \\
+  & BA & 4  & 0.08 & 0.10 & 0.14 \\
+\midrule
+\multirow{4}{*}{\textit{Terroristas}} 
+  & O  & 6  & 0.12 & 0.56 & 0.62 \\
+  & ER & 4  & 0.12 & 0.11 & 0.11 \\
+  & WS & 7  & 0.12 & 0.61 & 0.61 \\
+  & BA & 4  & 0.12 & 0.16 & 0.21 \\
+\bottomrule
+\end{tabular}
+\caption{Comparación con modelos generativos.}
+\end{table}
+
+
+
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{imagen 0.png}
+  \caption{Resumen de indicadores de topología para la red “Los Miserables” y su modelo equivalente Watts-Strogats.}
+  \label{fig:losmiserables}
+\end{figure}
+
+
+
+
+
+La distribución de grados de la red “Los Miserables” resultó muy heterogénea, con presencia de algunos nodos muy conectados, en cambio que el modelo presentó una concentración en un grado alrededor de 7. Sucede algo parecido en la distribución de centralidad de grado, por lo que se puede inferir que la red original tiene una estructura con algunos nodos muy conectados con muchas conexiones, algo recurrente en redes sociales. La distribución de intermediación presenta nodos con valores altos para la red original, lo que indica que hay nodos clave en la conexión. La distribución de centralidad de cercanía de la red real muestra varios nodos con valores altos, lo que indica que la red original presenta nodos confluentes o hubs.
+
+
+\subsection{Comparación entre redes}
+
+La red Los Miserables presenta un nodo diferencial por su grado y centralidad (nodo 10, Figura X), seguido por otros 3 nodos con grado menor y centralidad similar (nodos 23, 48 y 55). Lo cual podría corresponderse con los niveles de protagonismo de los personajes de la novela. En cambio, en la red Terroristas existe una mayor heterogeneidad en cuestión de grado y centralidad de los nodos (Figura x), indicando una descentralización de los integrantes de la red.
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{imagen 1.png}
+  \caption{Red “Los Miserables”, el tamaño indica el grado del nodo y el color su centralidad.}
+  \label{fig:terroristas}
+\end{figure}
+
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{imagen 2.png}
+  \caption{Red “Terroristas”, el tamaño indica el grado del nodo y el color su centralidad.}
+  \label{fig:terroristas}
+\end{figure}
+
+\subsection{Análisis de robustez}
+
+
+
+El análisis de la robustez de las redes reflejó una mayor tolerancia de la red “Terroristas” tanto a fallas aleatorias como a ataques dirigidos (Figura X). En el ensayo de “ataque dirigido”, ambas redes se vieron rápidamente afectadas en su componente gigante, viéndose reducida a aproximadamente la mitad con alrededor del \(10\%\) de los nodos eliminados, aunque la red “Terroristas” conservó una componente gigante mayor a la indicada por la red “Los Miserables” durante toda la simulación. Este resultado refleja la importancia de los nodos principales de la red “Los Miserables”, viéndose comprometida en su estructura cuando son eliminados. Por otro lado, la red “Terroristas”, al estar constituida de forma más descentralizada, comparativamente no presenta tanto compromiso a la eliminación de nodos importantes.
+
+La simulación de fallas aleatorias mostró un comportamiento diferenciado de las redes. La red “Terroristas” fue constante en todo momento, siendo la componente gigante aproximadamente proporcional a la fracción de nodos eliminados. En cambio, la red “Los Miserables” sufrió un descenso abrupto del tamaño de la componente gigante con el \(40\%\) de los nodos eliminados. De nuevo, estos resultados indican una respuesta diferenciada de las redes según la cantidad y disposición de nodos importantes.
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imagen 3.png}
+  \caption{Robustez: ataque dirigido (Izq.) y fallas aleatorias (Der.).}
+  \label{fig:robustez}
+\end{figure}
+
+
+
+\subsection{Análisis de comunidades}
+
+Tanto en la red “Los Miserables” como en “Terroristas” el análisis de comunidades pudo diferenciar grupos. El modelo de Louvian (Figura X) recuperó 7 comunidades para la red “Los Miserables” y 5 para “Terroristas”, siendo estas últimas espacialmente más ordenadas, lo que permite una distinción mas clara. El modelo Girvan – Newman recuperó 10 comunidades para la red “Los Miserables” y 9 para “Terroristas”, en ambos casos con una comunidad más numerosa y espacialmente centralizada.
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{imagen 4.png}
+  \caption{Comunidades por algoritmo de Louvain en ambas redes.}
+  \label{fig:comunidades}
+\end{figure}
+
+\section{Conclusiones}
+
+La red “Terroristas” muestra adaptaciones que maximizan su robustez y descentralización, posiblemente como resultado de su contexto ilegal. En contraste, la red “Los Miserables” se apoya en nodos centrales, lo que la hace más vulnerable. Este tipo de análisis puede aportar herramientas valiosas para la comprensión y prevención de fenómenos complejos como el crimen organizado.
+
+\bibliographystyle{plainnat}
+\bibliography{referencias}
+
+\end{document}
